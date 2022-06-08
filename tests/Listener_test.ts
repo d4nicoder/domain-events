@@ -1,8 +1,4 @@
-import {
-  assert,
-  assertEquals,
-  assertThrows,
-} from "../deps.ts";
+import { assert, assertEquals, assertThrows } from "../deps.ts";
 import { Listener } from "../lib/Listener.ts";
 
 Deno.test("Listener", async (t) => {

@@ -1,4 +1,4 @@
-import { v4, FakeTime, assert, assertEquals, assertThrows } from "../deps.ts";
+import { assert, assertEquals, assertThrows, FakeTime, v4 } from "../deps.ts";
 import { Message } from "../lib/Message.ts";
 
 Deno.test("Message", async (t) => {

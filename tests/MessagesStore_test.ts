@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '../deps.ts'
+import { assert, assertEquals } from "../deps.ts";
 import sinon from "https://cdn.skypack.dev/sinon@14.0.0?dts";
 import { Listener } from "../lib/Listener.ts";
 import { Message } from "../lib/Message.ts";
