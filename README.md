@@ -46,3 +46,73 @@ const message = new Message({
 
 await exchange.publish(message);
 ```
+
+Create an events exchange in `direct` mode, subscribe to a route and publish a
+message
+
+```typescript
+import {
+  Exchange,
+  Message,
+  MessagePrimitives,
+  Subscriber,
+} from "https://github.com/d4nicoder/domain-events/raw/main/mod.ts";
+
+const exchange = new Exchange("direct");
+
+// Creating a listener
+const subscriber = new Subscriber({
+  routingKey: "core.user.created", // In direct mode the route should match
+  handler: async (message: MessagePrimitives) => {
+    // Do awesome stuff here
+  },
+});
+
+exchange.subscribe(listener);
+
+const message = new Message({
+  route: "core.user.created",
+  payload: {
+    id: "userId",
+    name: "Tony",
+    lastName: "Stark",
+  },
+});
+
+await exchange.publish(message);
+```
+
+Create an events exchange in `fanout` mode, subscribe to a route and publish a
+message
+
+```typescript
+import {
+  Exchange,
+  Message,
+  MessagePrimitives,
+  Subscriber,
+} from "https://github.com/d4nicoder/domain-events/raw/main/mod.ts";
+
+const exchange = new Exchange("topic");
+
+// Creating a listener
+const subscriber = new Subscriber({
+  routingKey: "no.matter", // <-- On fanout exchanges messages will be delivered to all subscribers
+  handler: async (message: MessagePrimitives) => {
+    // Do awesome stuff here
+  },
+});
+
+exchange.subscribe(listener);
+
+const message = new Message({
+  route: "core.user.created",
+  payload: {
+    id: "userId",
+    name: "Tony",
+    lastName: "Stark",
+  },
+});
+
+await exchange.publish(message);
+```
