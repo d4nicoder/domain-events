@@ -16,7 +16,7 @@ Deno.test("MessagesStore", async (t) => {
       const store = new MessagesStore("direct");
       const route = "route";
       const payload = "payload";
-      const handler = async () => {
+      const handler = () => {
         throw new Error("custom error");
       };
       const spy = sinon.spy(console, "error");

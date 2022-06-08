@@ -14,7 +14,7 @@ export class MessagesStore {
 
   async publish(message: Message): Promise<void> {
     this.messages.push(message);
-    return this.processMessages();
+    return await this.processMessages();
   }
 
   addListener(listener: Listener) {
@@ -47,7 +47,7 @@ export class MessagesStore {
         if (this.isMatchingRoute(message.route, listener.routingKey)) {
           try {
             await listener.handler(message.toPrimitives());
-          } catch (e: any) {
+          } catch (e: Error) {
             console.error(e);
           }
         }

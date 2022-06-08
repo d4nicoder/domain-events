@@ -3,13 +3,13 @@ export type MessagePrimitives = {
   route: string;
   correlationId?: string;
   occurredAt: Date;
-  payload: any;
+  payload: unknown;
   replyTo?: string;
 };
 
 export class Message {
   public readonly route: string;
-  public readonly payload: any;
+  public readonly payload: unknown;
   public readonly id: string;
   public readonly correlationId?: string;
   public readonly occurredAt: Date;
@@ -18,7 +18,7 @@ export class Message {
   constructor(
     props: {
       route: string;
-      payload: any;
+      payload: unknown;
       correlationId?: string;
       replyTo?: string;
     },
