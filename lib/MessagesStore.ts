@@ -47,7 +47,7 @@ export class MessagesStore {
         if (this.isMatchingRoute(message.route, listener.routingKey)) {
           try {
             await listener.handler(message.toPrimitives());
-          } catch (e: Error) {
+          } catch (e: unknown) {
             console.error(e);
           }
         }
