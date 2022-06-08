@@ -1,6 +1,6 @@
 import { MessagePrimitives } from "./Message.ts";
 
-export class Listener {
+export class Subscriber {
   public readonly routingKey: string;
   public readonly handler: (message: MessagePrimitives) => Promise<void>;
 

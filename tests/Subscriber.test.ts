@@ -1,10 +1,10 @@
 import { assert, assertEquals, assertThrows } from "../deps.ts";
-import { Listener } from "../lib/Listener.ts";
+import { Subscriber } from "../lib/Subscriber.ts";
 
-Deno.test("Listener", async (t) => {
+Deno.test("Subscriber", async (t) => {
   await t.step("should throw if route is not a string", () => {
     assertThrows(() => {
-      new Listener({
+      new Subscriber({
         // @ts-ignore: we are checking this
         routingKey: 1234,
         handler: async () => {},
@@ -14,7 +14,7 @@ Deno.test("Listener", async (t) => {
 
   await t.step("should throw if handler is not a function", () => {
     assertThrows(() => {
-      new Listener({
+      new Subscriber({
         routingKey: "test",
         // @ts-ignore: we are checking this
         handler: "Not a function",
@@ -23,21 +23,21 @@ Deno.test("Listener", async (t) => {
   });
 
   await t.step("should be instantiated", () => {
-    const listener = new Listener({
+    const subscriber = new Subscriber({
       handler: async () => {},
       routingKey: "test",
     });
-    assert(listener instanceof Listener, "Listener instantiated");
+    assert(subscriber instanceof Subscriber, "Listener instantiated");
   });
 
   await t.step("should have the correct properties", () => {
     const routingKey = "test";
     const handler = async () => {};
-    const listener = new Listener({
+    const subscriber = new Subscriber({
       routingKey,
       handler,
     });
-    assertEquals(listener.handler, handler);
-    assertEquals(listener.routingKey, routingKey);
+    assertEquals(subscriber.handler, handler);
+    assertEquals(subscriber.routingKey, routingKey);
   });
 });

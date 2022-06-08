@@ -1,30 +1,30 @@
 import { assert, assertEquals } from "../deps.ts";
 import sinon from "https://cdn.skypack.dev/sinon@14.0.0?dts";
-import { Listener } from "../lib/Listener.ts";
+import { Subscriber } from "../lib/Subscriber.ts";
 import { Message } from "../lib/Message.ts";
-import { MessagesStore } from "../lib/MessagesStore.ts";
+import { Exchange } from "../lib/Exchange.ts";
 
-Deno.test("MessagesStore", async (t) => {
+Deno.test("Exchange", async (t) => {
   await t.step("should instantiate correctly", () => {
-    const store = new MessagesStore();
-    assert(store instanceof MessagesStore);
+    const store = new Exchange();
+    assert(store instanceof Exchange);
   });
 
   await t.step(
     "should print error if listener handler throws an exception",
     async () => {
-      const store = new MessagesStore("direct");
+      const store = new Exchange("direct");
       const route = "route";
       const payload = "payload";
       const handler = () => {
         throw new Error("custom error");
       };
       const spy = sinon.spy(console, "error");
-      const listener = new Listener({
+      const listener = new Subscriber({
         routingKey: route,
         handler,
       });
-      store.addListener(listener);
+      store.subscribe(listener);
       const message = new Message({
         route,
         payload,
@@ -36,20 +36,20 @@ Deno.test("MessagesStore", async (t) => {
 
   await t.step("in direct mode", async (t) => {
     await t.step("should publish message only to exact routes", async () => {
-      const store = new MessagesStore("direct");
+      const store = new Exchange("direct");
       const handler = async () => {};
       const handlerSpy = sinon.spy(handler);
-      const listener = new Listener({
+      const listener = new Subscriber({
         handler: handlerSpy,
         routingKey: "test",
       });
-      store.addListener(listener);
+      store.subscribe(listener);
 
-      const nonMatchingListener = new Listener({
+      const nonMatchingListener = new Subscriber({
         handler: handlerSpy,
         routingKey: "other-route",
       });
-      store.addListener(nonMatchingListener);
+      store.subscribe(nonMatchingListener);
 
       const message = new Message({
         route: "test",
@@ -71,17 +71,17 @@ Deno.test("MessagesStore", async (t) => {
   await t.step("in fanout mode", async (t) => {
     await t.step("should delivery message to everybody", async () => {
       const spyFunction = sinon.spy();
-      const store = new MessagesStore("fanout");
-      const listener1 = new Listener({
+      const store = new Exchange("fanout");
+      const listener1 = new Subscriber({
         handler: spyFunction,
         routingKey: "random1",
       });
-      store.addListener(listener1);
-      const listener2 = new Listener({
+      store.subscribe(listener1);
+      const listener2 = new Subscriber({
         handler: spyFunction,
         routingKey: "random2",
       });
-      store.addListener(listener2);
+      store.subscribe(listener2);
 
       const message = new Message({
         payload: "payload",
@@ -102,12 +102,12 @@ Deno.test("MessagesStore", async (t) => {
       "should not deliver the message if route name only matches the begining",
       async () => {
         const handler = sinon.spy();
-        const store = new MessagesStore("topic");
-        const listener = new Listener({
+        const store = new Exchange("topic");
+        const listener = new Subscriber({
           handler,
           routingKey: "start.route.path",
         });
-        store.addListener(listener);
+        store.subscribe(listener);
 
         const message = new Message({
           route: "start.route.path.extra.content",
@@ -123,12 +123,12 @@ Deno.test("MessagesStore", async (t) => {
       "should not deliver the message if route does not start like the message",
       async () => {
         const handler = sinon.spy();
-        const store = new MessagesStore("topic");
-        const listener = new Listener({
+        const store = new Exchange("topic");
+        const listener = new Subscriber({
           handler,
           routingKey: "start.route.path",
         });
-        store.addListener(listener);
+        store.subscribe(listener);
 
         const message = new Message({
           route: "route.path",
@@ -144,12 +144,12 @@ Deno.test("MessagesStore", async (t) => {
       "should deliver the message if route matches 100%",
       async () => {
         const handler = sinon.spy();
-        const store = new MessagesStore("topic");
-        const listener = new Listener({
+        const store = new Exchange("topic");
+        const listener = new Subscriber({
           handler,
           routingKey: "start.route.path",
         });
-        store.addListener(listener);
+        store.subscribe(listener);
 
         const message = new Message({
           route: "start.route.path",
@@ -165,12 +165,12 @@ Deno.test("MessagesStore", async (t) => {
       "should deliver the message if route matches with wildcards",
       async () => {
         const handler = sinon.spy();
-        const store = new MessagesStore("topic");
-        const listener = new Listener({
+        const store = new Exchange("topic");
+        const listener = new Subscriber({
           handler,
           routingKey: "start.*.path",
         });
-        store.addListener(listener);
+        store.subscribe(listener);
 
         const message = new Message({
           route: "start.route.path",

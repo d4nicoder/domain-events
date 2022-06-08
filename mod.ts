@@ -1,3 +1,3 @@
 export { Message, type MessagePrimitives } from "./lib/Message.ts";
-export { Listener } from "./lib/Listener.ts";
-export { MessagesStore } from "./lib/MessagesStore.ts";
+export { Subscriber } from "./lib/Subscriber.ts";
+export { Exchange } from "./lib/Exchange.ts";

@@ -1,10 +1,10 @@
-import { Listener } from "./Listener.ts";
+import { Subscriber } from "./Subscriber.ts";
 import { Message } from "./Message.ts";
 
-export class MessagesStore {
+export class Exchange {
   private readonly mode: string;
   private messages: Message[];
-  private readonly listeners: Listener[];
+  private readonly listeners: Subscriber[];
 
   constructor(mode?: "direct" | "topic" | "fanout") {
     this.mode = mode || "direct";
@@ -17,7 +17,7 @@ export class MessagesStore {
     return await this.processMessages();
   }
 
-  addListener(listener: Listener) {
+  subscribe(listener: Subscriber) {
     this.listeners.push(listener);
   }
 
