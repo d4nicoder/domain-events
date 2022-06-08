@@ -33,9 +33,9 @@ jobs:
 
       - name: Run linter
         run: deno lint
-      
+
       - name: Formatting check
-        run: deno fmt --check
+        run: deno fmt --check lib tests mod.ts
 
       - name: Run tests
         run: deno test -A --unstable
