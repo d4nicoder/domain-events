@@ -53,7 +53,5 @@ jobs:
             -Dsonar.organization=d4nicoder
             -Dsonar.projectKey=d4nicoder_domain-events
             -Dsonar.sources=lib/
-            -Dsonar.test.exclusions=tests/**
             -Dsonar.tests=tests/
-            -Dsonar.verbose=true
             -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
