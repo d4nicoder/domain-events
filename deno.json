@@ -1,0 +1,18 @@
+{
+  "lint": {
+    "files": {
+      "include": [
+        "lib/",
+        "tests/"
+      ]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": [
+        "lib/",
+        "tests/"
+      ]
+    }
+  }
+}
