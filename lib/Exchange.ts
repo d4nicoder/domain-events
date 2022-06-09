@@ -4,12 +4,19 @@ import { Message } from "./Message.ts";
 export class Exchange {
   private readonly mode: string;
   private messages: Message[];
-  private readonly listeners: Subscriber[];
+  private queues: Subscriber[];
 
   constructor(mode?: "direct" | "topic" | "fanout") {
     this.mode = mode || "direct";
     this.messages = [];
-    this.listeners = [];
+    this.queues = [];
+    this.ensureIsValid();
+  }
+
+  private ensureIsValid() {
+    if (!/^(direct|topic|fanout)$/.test(this.mode)) {
+      throw new Error("InvalidExchangeMode");
+    }
   }
 
   async publish(message: Message): Promise<void> {
@@ -17,21 +24,41 @@ export class Exchange {
     return await this.processMessages();
   }
 
-  subscribe(listener: Subscriber) {
-    this.listeners.push(listener);
+  /**
+   * Bind queue to a route
+   * @param {Subscriber} listener
+   */
+  bindQueue(listener: Subscriber) {
+    const existingQueue = this.queues.find((subscriber) =>
+      subscriber.queue === listener.queue
+    );
+    if (existingQueue) {
+      throw new Error("QueueAlreadyExistsError");
+    }
+    this.queues.push(listener);
+  }
+
+  /**
+   * Unbind a queue
+   * @param {string} queue
+   */
+  unbindQueue(queue: string) {
+    this.queues = this.queues.filter((subscriber) =>
+      subscriber.queue !== queue
+    );
   }
 
   private isMatchingRoute(
     messageRoute: string,
-    listenerRoute: string,
+    subscriberRoute: string,
   ): boolean {
     if (this.mode === "fanout") {
       return true;
     } else if (this.mode === "direct") {
-      return messageRoute === listenerRoute;
+      return messageRoute === subscriberRoute;
     } else {
       // Topic mode
-      const expStr = listenerRoute.replace(".", "\.").replace("*", "[^\.]*");
+      const expStr = subscriberRoute.replace(".", "\.").replace("*", "[^\.]*");
       const regExp = new RegExp(`^${expStr}$`);
       return regExp.test(messageRoute);
     }
@@ -41,8 +68,8 @@ export class Exchange {
     const processedMessages: string[] = [];
     for (let m = 0; m < this.messages.length; m++) {
       const message = this.messages[m];
-      for (let l = 0; l < this.listeners.length; l++) {
-        const listener = this.listeners[l];
+      for (let l = 0; l < this.queues.length; l++) {
+        const listener = this.queues[l];
 
         if (this.isMatchingRoute(message.route, listener.routingKey)) {
           try {

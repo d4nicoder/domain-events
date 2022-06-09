@@ -31,9 +31,10 @@ const subscriber = new Subscriber({
   handler: async (message: MessagePrimitives) => {
     // Do awesome stuff here
   },
+  queue: 'handle_user_changes'
 });
 
-exchange.subscribe(listener);
+exchange.bindQueue(listener);
 
 const message = new Message({
   route: "core.user.created",
@@ -66,9 +67,10 @@ const subscriber = new Subscriber({
   handler: async (message: MessagePrimitives) => {
     // Do awesome stuff here
   },
+  queue: 'send_mail_on_user_created'
 });
 
-exchange.subscribe(listener);
+exchange.bindQueue(listener);
 
 const message = new Message({
   route: "core.user.created",
@@ -101,9 +103,10 @@ const subscriber = new Subscriber({
   handler: async (message: MessagePrimitives) => {
     // Do awesome stuff here
   },
+  queue: 'some_queue_name'
 });
 
-exchange.subscribe(listener);
+exchange.bindQueue(listener);
 
 const message = new Message({
   route: "core.user.created",
@@ -115,4 +118,26 @@ const message = new Message({
 });
 
 await exchange.publish(message);
+```
+
+### Unbind a queue
+
+You can also unbind a queue at any time.
+
+```typescript
+const exchange = new Exchange('topic')
+
+const subscriber = new Subscriber({
+    routeingKey: 'some.route.key',
+    queue: 'some_queue_name',
+    handler: async () => {}
+})
+
+exchange.bindQueue(subscriber)
+
+// Some logic here....
+
+exchange.unbindQueue(subscriber.queue)
+
+// At this moment this queue will no recive new messages
 ```
