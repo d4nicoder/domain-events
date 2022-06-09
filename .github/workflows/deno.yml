@@ -41,7 +41,7 @@ jobs:
         run: deno test -A --unstable
 
       - name: Get coverage report
-        run:  deno test --coverage=.coverage-report && deno coverage --lcov .coverage-report --output=./coverage/lcov.info
+        run:  deno test --coverage=.coverage-report && mkdir ./coverage && deno coverage --lcov .coverage-report --output=./coverage/lcov.info
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
